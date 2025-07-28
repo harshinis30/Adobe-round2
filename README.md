@@ -113,17 +113,16 @@ Your solution will be tested using:
 ### ✅ Build Docker Image
 
 ```bash
-docker build --platform linux/amd64 -t persona-extractor:uniqueid .
+docker build -t persona-extractor .
 ```
 
 ### ▶️ Run Docker Container
 
 ```bash
-docker run --rm \
-  -v $(pwd)/input:/app/input \
-  -v $(pwd)/output:/app/output \
-  --network none \
-  persona-extractor:uniqueid
+docker run --rm ^
+  -v "C:\Users\Larika\Round 2\Challenge_1b\Collection 1\PDFs":/app/input ^
+  -v "C:\Users\Larika\Round 2\output":/app/output ^
+  --network none persona-extractor
 ```
 
 ---
