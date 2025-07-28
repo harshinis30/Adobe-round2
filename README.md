@@ -1,56 +1,39 @@
-# 📘 PDF Outline Extractor — Hackathon Submission (Round 1A)
+# 📘 PDF Persona-Aware Section Extractor — Hackathon Submission (Round 1B)
 
-### Challenge Theme: *Connecting the Dots Through Docs*
+### Challenge Theme: *Connect What Matters — For the User Who Matters*
 
-This solution extracts a structured outline from any PDF — including the document **title**, and all **H1, H2, H3** headings — in a clean, multilingual-aware, hierarchical JSON format.
+This solution intelligently extracts the **most relevant sections** from a set of PDFs by understanding both the **persona** and the **task to be done** — capturing critical information in a structured, ranked, and summarized JSON format.
 
 ---
 
 ## 🧠 Approach
 
-Our approach combines **layout heuristics**, **font size clustering**, and **score-based heading detection** to understand the structure of any PDF like a machine would.
+Our solution blends **layout parsing**, **heading detection**, **semantic similarity**, and **refined summarization** to locate the most important content — entirely offline.
 
-### 🧩 Key Components:
+### 🧩 Key Components
 
-#### 1. **Layout-Aware Block Extraction**
-- Uses [`PyMuPDF`](https://github.com/pymupdf/PyMuPDF) to extract text spans with font size, position, and style metadata.
-- Constructs paragraph blocks per line for heading analysis.
+#### 1. **Layout Parsing & Block Metadata**
+- Extracts all styled lines from PDFs using `PyMuPDF`, capturing:
+  - Font size, boldness, positioning
+  - Page-level metadata
 
-#### 2. **Font Size Clustering**
-We extract all unique font sizes and assign:
-- Largest → `H1`
-- Second Largest → `H2`
-- Third Largest → `H3`
+#### 2. **Heading Detection via Scoring**
+- Scores each line to detect whether it’s a heading using heuristics like:
+  - Font size > average body
+  - Title casing / short length / boldness
+  - Starts at top-left
+  - No end punctuation
 
-This dynamic strategy adjusts to variations in font across documents.
+#### 3. **Intent Embedding**
+- Combines persona + job-to-be-done into a single **semantic vector** using `sentence-transformers` (E5-small-v2).
+- Generalizes to all domains — academic, finance, education, etc.
 
-```python
-# cluster_font_sizes
-font_sizes = sorted(set(font_sizes), reverse=True)
-size_map = {"H1": font_sizes[0], "H2": font_sizes[1], "H3": font_sizes[2]}
-```
+#### 4. **Section Relevance Matching**
+- Computes **cosine similarity** between all detected headings and the intent vector.
+- Top-matching headings are extracted.
 
-#### 3. **Heading Scoring & Anomaly Filtering**
-
-Each block is scored based on:
-
-* Font size relative to average
-* Boldness, uppercase ratio
-* Short length (likely heading)
-* Top-of-page / left alignment
-* Absence of trailing punctuation
-* Matches multilingual section patterns like `1.1`, `A.2`, `一.二` using Unicode-aware regex
-
-Only high-scoring blocks are treated as heading candidates.
-
-#### 4. **Multilingual Support**
-
-* Our regex captures multilingual numbering (e.g., Japanese, Hindi, Chinese).
-* Unicode ranges are used for:
-
-  * Arabic: `\u0600–\u06FF`
-  * CJK: `\u4E00–\u9FFF`
-* Easily extensible to other scripts.
+#### 5. **Subsection Summarization**
+- Lines under top headings are cleaned, dedented, and summarized without losing structure.
 
 ---
 
@@ -58,111 +41,127 @@ Only high-scoring blocks are treated as heading candidates.
 
 ```
 .
-├── main.py                  # Pipeline entry point
-├── layout_parser.py         # Extracts text spans from PDF
-├── heading_ranker.py        # Scores heading blocks using heuristics
-├── utils.py                 # Font size clustering + level mapping
-├── output/                  # Output JSON directory
-├── input/                   # Input PDF directory
-├── Dockerfile               # Submission-ready Dockerfile
-├── README.md                # This file
+├── main.py                  # Entry script: coordinates pipeline
+├── layout_parser.py         # Extracts styled lines from PDF
+├── heading_ranker.py        # Scores lines for heading likelihood
+├── intent_extractor.py      # Converts persona + job to vector
+├── section_ranker.py        # Scores headings vs intent
+├── summarizer.py            # Extracts content under top headings
+├── embedder.py              # Loads and manages sentence transformer
+├── Challenge_1b/
+│   └── Collection 1/
+│       ├── PDFs/            # Input PDFs
+│       ├── challenge1b_input.json
+│       └── challenge1b_output.json (optional)
+├── requirements.txt
+├── Dockerfile
+├── output.json
+└── README.md
 ```
 
 ---
 
-## 📦 Libraries Used
-
-| Library             | Purpose                                  |
-| ------------------- | ---------------------------------------- |
-| `PyMuPDF`           | PDF text and layout parsing (`fitz`)     |
-| `re`                | Regex matching for multilingual headings |
-| `json`, `sys`, `os` | File I/O and orchestration               |
-
-No deep learning. No web calls. Fully offline.
-
----
-
-## 🔧 Build & Run Instructions
-
-⚠️ Your solution will be run using the *Expected Execution* below — make sure your local testing mirrors this.
-
-### ✅ Build the Docker image
-
-```bash
-docker build --platform linux/amd64 -t mysolutionname:somerandomid .
-```
-
-### ▶️ Run the Docker container
-
-```bash
-docker run --rm \
-  -v $(pwd)/input:/app/input \
-  -v $(pwd)/output:/app/output \
-  --network none \
-  mysolutionname:somerandomid
-```
-
-### 🧾 What It Does
-
-* Reads all PDFs in `/app/input`
-* Writes corresponding `filename.json` files into `/app/output`
-* Output format:
+## 📥 Input Format
 
 ```json
 {
-  "title": "Understanding AI",
-  "outline": [
-    { "level": "H1", "text": "Introduction", "page": 1 },
-    { "level": "H2", "text": "What is AI?", "page": 2 },
-    { "level": "H3", "text": "History of AI", "page": 3 }
+  "persona": { "role": "Travel Blogger" },
+  "job_to_be_done": { "task": "Create a travel guide on South of France" },
+  "documents": [
+    { "filename": "South of France - Cuisine.pdf" },
+    { "filename": "South of France - Cities.pdf" }
   ]
 }
 ```
 
 ---
 
-## ⚙️ Constraints Handled
+## 📤 Output Format
 
-| Constraint            | Handled?          |
-| --------------------- | ----------------- |
-| ≤ 10s per 50-page PDF | ✅                 |
-| Model size ≤ 200MB    | ✅ (no model used) |
-| No internet           | ✅                 |
-| CPU-only (amd64)      | ✅                 |
+```json
+{
+  "metadata": {
+    "input_documents": [...],
+    "persona": "...",
+    "job_to_be_done": "...",
+    "processing_timestamp": "..."
+  },
+  "extracted_sections": [
+    {
+      "document": "South of France - Cuisine.pdf",
+      "section_title": "Local Dishes",
+      "importance_rank": 1,
+      "page_number": 2
+    }
+  ],
+  "subsection_analysis": [
+    {
+      "document": "South of France - Cuisine.pdf",
+      "page_number": 2,
+      "refined_text": "Bouillabaisse is a traditional stew made with..."
+    }
+  ]
+}
+```
 
 ---
 
-## 🧪 Testing Guide (Locally)
+## 🔧 Build & Run Instructions
 
-1. Put any `.pdf` files inside the `input/` folder.
-2. Run the docker container.
-3. Check the corresponding `.json` outputs inside `output/`.
+Your solution will be tested using:
+
+### ✅ Build Docker Image
+
+```bash
+docker build --platform linux/amd64 -t persona-extractor:uniqueid .
+```
+
+### ▶️ Run Docker Container
+
+```bash
+docker run --rm \
+  -v $(pwd)/input:/app/input \
+  -v $(pwd)/output:/app/output \
+  --network none \
+  persona-extractor:uniqueid
+```
+
+---
+
+## ⚙️ Constraints Handled
+
+| Constraint                  | Satisfied? |
+|----------------------------|------------|
+| ≤ 60s for 5 PDFs           | ✅         |
+| CPU-only (amd64)           | ✅         |
+| Model ≤ 1 GB               | ✅ (e5-small-v2) |
+| No internet access         | ✅         |
 
 ---
 
 ## ✨ Highlights
 
-* ✅ Purely rule-based: fast and explainable
-* 🧠 Intelligent: position, font, and boldness awareness
-* 🌍 Multilingual-aware: supports Hindi, Chinese, Arabic, Japanese patterns
-* ⚡️ Efficient: fully offline, no dependencies larger than PyMuPDF
+* ✅ Semantic understanding of user intent
+* 📚 Works across diverse document domains
+* 🧠 Combines layout and embedding knowledge
+* 🔍 Modular and fully explainable pipeline
 
 ---
 
 ## 🔒 Notes
 
 * ❌ No hardcoding or file-specific hacks used
-* ❌ No external model downloads or APIs
-* ✅ Modular and ready to extend for Round 1B
+* ❌ No internet access needed (all offline)
+* ✅ Reusable for future phases (e.g., webapp integration)
 
 ---
 
 ## 📜 License
 
-MIT License — free for research and hackathon use.
+MIT License — Free for research and competition use.
 
 ---
 
-## 👩‍💻 Author
+## 👩‍💻 Authors
 
-Made by R.K.Larika and S.Harshini — developed as part of the “Understand Your Document” hackathon challenge.
+Built by R.K.Larika and S.Harshini for the Adobe “Connect the Dots” Hackathon Challenge (Round 1B).
