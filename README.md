@@ -1,122 +1,82 @@
+# 📘 PDF Persona-Aware Section Extractor — Hackathon Submission (Round 1B)
 
-# 📚 PDF Intent-Based Section Extractor
+### Challenge Theme: *Connect What Matters — For the User Who Matters*
 
-This project processes collections of PDF documents to extract and summarize the most relevant sections based on a **persona** and a **task**. It combines layout parsing, heading identification, semantic similarity ranking, and content summarization to deliver focused insights.
-
----
-
-## 🚀 Overview
-
-Given:
-- A **persona** (e.g., Travel Blogger)
-- A **job-to-be-done** (e.g., Create a guide on South of France)
-- A **set of PDF documents** (e.g., travel information)
-
-The system:
-1. Parses the layout and structure of each PDF.
-2. Detects headings using font and formatting heuristics.
-3. Matches headings with the user’s intent using sentence embeddings.
-4. Extracts and refines relevant content under those headings.
+This solution intelligently extracts the **most relevant sections** from a set of PDFs by understanding both the **persona** and the **task to be done** — capturing critical information in a structured, ranked, and summarized JSON format.
 
 ---
 
-## 🗂️ Project Structure
+## 🧠 Approach
+
+Our solution blends **layout parsing**, **heading detection**, **semantic similarity**, and **refined summarization** to locate the most important content — entirely offline.
+
+### 🧩 Key Components
+
+#### 1. **Layout Parsing & Block Metadata**
+- Extracts all styled lines from PDFs using `PyMuPDF`, capturing:
+  - Font size, boldness, positioning
+  - Page-level metadata
+
+#### 2. **Heading Detection via Scoring**
+- Scores each line to detect whether it’s a heading using heuristics like:
+  - Font size > average body
+  - Title casing / short length / boldness
+  - Starts at top-left
+  - No end punctuation
+
+#### 3. **Intent Embedding**
+- Combines persona + job-to-be-done into a single **semantic vector** using `sentence-transformers` (E5-small-v2).
+- Generalizes to all domains — academic, finance, education, etc.
+
+#### 4. **Section Relevance Matching**
+- Computes **cosine similarity** between all detected headings and the intent vector.
+- Top-matching headings are extracted.
+
+#### 5. **Subsection Summarization**
+- Lines under top headings are cleaned, dedented, and summarized without losing structure.
+
+---
+
+## 📂 Folder Structure
 
 ```
-ROUND_2/
+.
+├── main.py                  # Entry script: coordinates pipeline
+├── layout_parser.py         # Extracts styled lines from PDF
+├── heading_ranker.py        # Scores lines for heading likelihood
+├── intent_extractor.py      # Converts persona + job to vector
+├── section_ranker.py        # Scores headings vs intent
+├── summarizer.py            # Extracts content under top headings
+├── embedder.py              # Loads and manages sentence transformer
 ├── Challenge_1b/
 │   └── Collection 1/
-│       ├── PDFs/                         # PDF files for analysis
-│       ├── challenge1b_input.json        # Input with persona and job
-│       └── challenge1b_output.json       # Sample or generated output
-├── embedder.py                           # Embedding utility using Sentence Transformers
-├── heading_ranker.py                     # Scores lines to detect headings
-├── intent_extractor.py                   # Converts persona + task to embedding
-├── layout_parser.py                      # Extracts styled lines from PDFs
-├── main.py                               # Main pipeline controller
-├── output.json                           # Output after execution
-├── requirements.txt                      # Required Python libraries
-├── section_ranker.py                     # Matches headings with intent
-├── summarizer.py                         # Extracts text under top-ranked headings
-└── .gitignore                            # Excludes cache, virtual env, etc.
+│       ├── PDFs/            # Input PDFs
+│       ├── challenge1b_input.json
+│       └── challenge1b_output.json (optional)
+├── requirements.txt
+├── Dockerfile
+├── output.json
+└── README.md
 ```
 
 ---
 
 ## 📥 Input Format
 
-The input should be a JSON file like this:
-
 ```json
 {
   "persona": { "role": "Travel Blogger" },
-  "job_to_be_done": { "task": "Find content for travel guide on South of France" },
+  "job_to_be_done": { "task": "Create a travel guide on South of France" },
   "documents": [
-    { "filename": "South of France - Cities.pdf" },
-    { "filename": "South of France - Cuisine.pdf" }
+    { "filename": "South of France - Cuisine.pdf" },
+    { "filename": "South of France - Cities.pdf" }
   ]
 }
 ```
 
 ---
 
-## ⚙️ Setup
-
-### 1. Clone the Repository
-```bash
-git clone <repo-url>
-cd ROUND_2
-```
-
-### 2. Create Virtual Environment (Optional)
-```bash
-python -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
-```
-
-### 3. Install Requirements
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## ▶️ Running the Project
-
-```bash
-python main.py \
-  --pdf_folder "Challenge_1b/Collection 1/PDFs" \
-  --input_json "Challenge_1b/Collection 1/challenge1b_input.json" \
-  --output "output.json"
-```
-
----
-
-## 🔍 How It Works
-
-### 📄 1. `layout_parser.py`
-Uses `PyMuPDF` to extract lines of text with metadata like font size, font name, boldness, and position.
-
-### 🧠 2. `heading_ranker.py`
-Applies heuristics to decide whether a line is a heading:
-- Font size > body size
-- Bold or title-case formatting
-- Not a bullet or overly long line
-
-### ✨ 3. `intent_extractor.py`
-Encodes persona + job into a sentence embedding using the `intfloat/e5-small-v2` transformer.
-
-### 🧮 4. `section_ranker.py`
-Uses cosine similarity to score all headings against the intent embedding and rank them.
-
-### 🧹 5. `summarizer.py`
-Extracts lines under each top heading, removes bullet characters and extra whitespace, and returns cleaned text.
-
----
-
 ## 📤 Output Format
-
-The output is a JSON like:
 
 ```json
 {
@@ -138,7 +98,7 @@ The output is a JSON like:
     {
       "document": "South of France - Cuisine.pdf",
       "page_number": 2,
-      "refined_text": "Local Dishes Bouillabaisse is a traditional Provençal stew..."
+      "refined_text": "Bouillabaisse is a traditional stew made with..."
     }
   ]
 }
@@ -146,30 +106,62 @@ The output is a JSON like:
 
 ---
 
-## 🧩 Dependencies
+## 🔧 Build & Run Instructions
 
-Major libraries used:
-- `sentence-transformers`
-- `scikit-learn`
-- `PyMuPDF`
-- `torch`
-- `transformers`
+Your solution will be tested using:
 
-Install them with:
+### ✅ Build Docker Image
+
 ```bash
-pip install -r requirements.txt
+docker build --platform linux/amd64 -t persona-extractor:uniqueid .
+```
+
+### ▶️ Run Docker Container
+
+```bash
+docker run --rm \
+  -v $(pwd)/input:/app/input \
+  -v $(pwd)/output:/app/output \
+  --network none \
+  persona-extractor:uniqueid
 ```
 
 ---
 
-## 📌 Notes
+## ⚙️ Constraints Handled
 
-- Designed for structured, well-formatted PDFs (e.g., reports, guides).
-- Uses layout, not OCR.
-- Adaptable to various use cases like travel, food, history, and more.
+| Constraint                  | Satisfied? |
+|----------------------------|------------|
+| ≤ 60s for 5 PDFs           | ✅         |
+| CPU-only (amd64)           | ✅         |
+| Model ≤ 1 GB               | ✅ (e5-small-v2) |
+| No internet access         | ✅         |
+
+---
+
+## ✨ Highlights
+
+* ✅ Semantic understanding of user intent
+* 📚 Works across diverse document domains
+* 🧠 Combines layout and embedding knowledge
+* 🔍 Modular and fully explainable pipeline
+
+---
+
+## 🔒 Notes
+
+* ❌ No hardcoding or file-specific hacks used
+* ❌ No internet access needed (all offline)
+* ✅ Reusable for future phases (e.g., webapp integration)
+
+---
+
+## 📜 License
+
+MIT License — Free for research and competition use.
 
 ---
 
 ## 👩‍💻 Authors
 
-Built with ❤️ for semantic PDF analysis using NLP and layout heuristics.
+Built by R.K.Larika and S.Harshini for the Adobe “Connect the Dots” Hackathon Challenge (Round 1B).
