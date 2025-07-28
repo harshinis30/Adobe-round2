@@ -1,77 +1,75 @@
 {
     "metadata": {
         "input_documents": [
-            "Breakfast Ideas.pdf",
-            "Dinner Ideas - Mains_1.pdf",
-            "Dinner Ideas - Mains_2.pdf",
-            "Dinner Ideas - Mains_3.pdf",
-            "Dinner Ideas - Sides_1.pdf",
-            "Dinner Ideas - Sides_2.pdf",
-            "Dinner Ideas - Sides_3.pdf",
-            "Dinner Ideas - Sides_4.pdf",
-            "Lunch Ideas.pdf"
+            "South of France - Cities.pdf",
+            "South of France - Cuisine.pdf",
+            "South of France - History.pdf",
+            "South of France - Restaurants and Hotels.pdf",
+            "South of France - Things to Do.pdf",
+            "South of France - Tips and Tricks.pdf",
+            "South of France - Traditions and Culture.pdf"
         ],
-        "persona": "Food Contractor",
-        "job_to_be_done": "Prepare a vegetarian buffet-style dinner menu for a corporate gathering, including gluten-free items.",
-        "processing_timestamp": "2025-07-22T18:19:28.309651"
+        "persona": "Travel Planner",
+        "job_to_be_done": "Plan a trip of 4 days for a group of 10 college friends.",
+        "processing_timestamp": "2025-07-28T18:25:46.571309"
     },
     "extracted_sections": [
         {
-            "document": "Breakfast Ideas.pdf",
-            "section_title": "Cottage Cheese and Veggie Bowl",
+            "document": "South of France - Tips and Tricks.pdf",
+            "section_title": "Planning, and Exploring",
             "importance_rank": 1,
-            "page_number": 16
+            "page_number": 1
         },
         {
-            "document": "Dinner Ideas - Sides_2.pdf",
-            "section_title": "Freekeh Salad",
+            "document": "South of France - Cities.pdf",
+            "section_title": "Travel Tips",
             "importance_rank": 2,
-            "page_number": 10
+            "page_number": 2
         },
         {
-            "document": "Breakfast Ideas.pdf",
-            "section_title": "Cottage Cheese and Fruit",
+            "document": "South of France - Tips and Tricks.pdf",
+            "section_title": "Packing for Adults",
             "importance_rank": 3,
-            "page_number": 13
-        },
-        {
-            "document": "Breakfast Ideas.pdf",
-            "section_title": "Breakfast Skillet",
-            "importance_rank": 4,
-            "page_number": 9
-        },
-        {
-            "document": "Dinner Ideas - Sides_1.pdf",
-            "section_title": "Baked Beans",
-            "importance_rank": 5,
             "page_number": 4
+        },
+        {
+            "document": "South of France - Tips and Tricks.pdf",
+            "section_title": "Summer (June to August)",
+            "importance_rank": 4,
+            "page_number": 3
+        },
+        {
+            "document": "South of France - Traditions and Culture.pdf",
+            "section_title": "Course Camarguaise",
+            "importance_rank": 5,
+            "page_number": 3
         }
     ],
     "subsection_analysis": [
         {
-            "document": "Breakfast Ideas.pdf",
-            "page_number": 16,
-            "refined_text": "Cottage Cheese and Veggie Bowl Ingredients: 1 cup cottage cheese 1/4 cup diced cucumber 1/4 cup cherry tomatoes, halved 1/4 cup diced bell pepper Salt and pepper to taste Instructions: In a bowl, combine cottage cheese, cucumber, cherry tomatoes, and bell pepper. Season with salt and pepper. Serve immediately."
+            "document": "South of France - Tips and Tricks.pdf",
+            "page_number": 1,
+            "refined_text": "Planning, and Exploring"
         },
         {
-            "document": "Dinner Ideas - Sides_2.pdf",
-            "page_number": 10,
-            "refined_text": "Freekeh Salad Ingredients : o 1 cup freekeh o 2 cups water o 1 small onion o 1/4 cup parsley o 1/4 cup mint o 1/4 cup lemon juice o 1/4 cup olive oil o 1 teaspoon salt Instructions : o Rinse freekeh and cook in water until tender, then drain. o Saut\u00e9 diced onion in olive oil until softened. o Mix freekeh with saut\u00e9ed onion, chopped parsley, and mint. o Whisk lemon juice, olive oil, and salt, then pour over salad. o Toss well and serve."
+            "document": "South of France - Cities.pdf",
+            "page_number": 2,
+            "refined_text": "Travel Tips Best Time to Visit : The best time to visit the South of France is during the spring (April to June) and fall (September to October) when the weather is pleasant, and the tourist crowds are smaller. Transportation : The region is well-connected by an extensive network of trains, buses, and flights. Renting a car is also a great option for exploring the countryside and smaller towns. Language : While French is the o\ufb03cial language, English is widely spoken in tourist areas. Learning a few basic French phrases can enhance your travel experience."
         },
         {
-            "document": "Breakfast Ideas.pdf",
-            "page_number": 13,
-            "refined_text": "Cottage Cheese and Fruit Ingredients: 1 cup cottage cheese 1/2 cup fresh berries 1 tablespoon honey Instructions: In a bowl, combine cottage cheese and fresh berries. Drizzle with honey. Serve immediately."
-        },
-        {
-            "document": "Breakfast Ideas.pdf",
-            "page_number": 9,
-            "refined_text": "Breakfast Skillet Ingredients: 2 large eggs 1/2 cup diced potatoes 1/4 cup diced bell pepper 1/4 cup diced onion 1/4 cup cooked sausage or bacon Salt and pepper to taste 1 tablespoon olive oil Instructions: Heat olive oil in a skillet over medium heat. Add potatoes, bell pepper, and onion, and cook until tender. Add sausage or bacon and cook until heated through. Make two wells in the mixture and crack an egg into each well. Cover and cook until the eggs are set. Season with salt and pepper."
-        },
-        {
-            "document": "Dinner Ideas - Sides_1.pdf",
+            "document": "South of France - Tips and Tricks.pdf",
             "page_number": 4,
-            "refined_text": "Baked Beans Ingredients : o 4 cups cooked navy beans o 1 small onion o 1/2 cup molasses o 1/4 cup brown sugar o 1/4 cup ketchup o 1 tablespoon mustard o 1 teaspoon salt o 1/2 teaspoon pepper Instructions : o Preheat oven to 350\u00b0F (175\u00b0C). o Saut\u00e9 diced onion until translucent. o Mix beans, onion, molasses, brown sugar, ketchup, mustard, salt, and pepper in a baking dish. o Bake for 1 hour, stirring occasionally. o Serve warm."
+            "refined_text": "Packing for Adults"
+        },
+        {
+            "document": "South of France - Tips and Tricks.pdf",
+            "page_number": 3,
+            "refined_text": "Summer (June to August) Clothing: Lightweight, breathable fabrics like cotton and linen. Pack t-shirts, shorts, sundresses, and swimwear. Footwear: Sandals, flip-flops, and comfortable walking shoes. Accessories: Sunglasses, a wide-brimmed hat, sunscreen, and a reusable water bottle. Additional Tips: The South of France can get very hot in the summer, so stay hydrated and seek shade during peak sun hours. Pack a cooling towel to help manage the heat."
+        },
+        {
+            "document": "South of France - Traditions and Culture.pdf",
+            "page_number": 3,
+            "refined_text": "Course Camarguaise The Course Camarguaise is a traditional bullfighting sport unique to the Camargue region. Unlike Spanish bullfighting, the objective is not to harm the bull but to remove ribbons and other decorations from its horns. The razeteurs, or participants, demonstrate agility and bravery as they dodge the bull's charges. The sport is deeply rooted in local culture and is often accompanied by music and festivities, particularly in Arles from April to October."
         }
     ]
 }

@@ -1,8 +1,7 @@
 from sentence_transformers import SentenceTransformer
 
-# Initialize the model once and reuse it.
-# "intfloat/e5-small-v2" is a good, lightweight model for this task.
-model = SentenceTransformer("intfloat/e5-small-v2")
+# Load the model from the local folder directly
+model = SentenceTransformer("e5-small-v2-local")
 
 def encode_texts(texts):
     """
